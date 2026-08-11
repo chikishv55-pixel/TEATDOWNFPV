@@ -1,5 +1,10 @@
 import logging
 import sys
+import os
+
+# Добавляем корень проекта в path для корректных импортов
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from core.config import settings
 
 
