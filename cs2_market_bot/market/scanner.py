@@ -2,7 +2,7 @@ import time
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from typing import Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from market.base_provider import BaseMarketProvider
 from core.models import Item as DBItem, MarketStats, Listing as DBListing, Signal, Filter, User
@@ -104,7 +104,7 @@ class MarketScanner:
             db_stats.volume_7d = stats.volume_7d
             db_stats.spread = stats.spread
             db_stats.liquidity_score = liquidity_score
-            db_stats.updated_at = datetime.utcnow()
+            db_stats.updated_at = datetime.now(timezone.utc)
         else:
             db_stats = MarketStats(
                 item_id=item_id,
@@ -198,7 +198,7 @@ class MarketScanner:
 
         # Проверяем, не было ли такого сигнала недавно
         window_hours = settings.signal_duplicate_window_hours
-        cutoff_time = datetime.utcnow() - timedelta(hours=window_hours)
+        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=window_hours)
 
         result = await self.db.execute(
             select(Signal).where(
@@ -311,5 +311,5 @@ class MarketScanner:
         )
         signal = result.scalar_one_or_none()
         if signal:
-            signal.sent_at = datetime.utcnow()
+            signal.sent_at = datetime.now(timezone.utc)
             await self.db.flush()
