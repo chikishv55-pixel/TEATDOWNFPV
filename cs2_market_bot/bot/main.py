@@ -9,7 +9,7 @@ from core.database import init_db, close_db
 from core.logging import logger
 
 # Импорты роутеров
-from bot.handlers import start_router, help_router, signals_router, premium_router
+from bot.handlers import start_router, help_router, signals_router, premium_router, market_router
 
 
 def create_dispatcher() -> Dispatcher:
@@ -21,6 +21,7 @@ def create_dispatcher() -> Dispatcher:
     dp.include_router(help_router)
     dp.include_router(signals_router)
     dp.include_router(premium_router)
+    dp.include_router(market_router)
 
     return dp
 
